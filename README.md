@@ -1,2 +1,3 @@
-aaa
-# es_genai_data-drive-intelligence
+# Elasticsearch + GenAI = Data-Driven Intelligence
+## The Elastic Change Points Advisor RAG Application
+
