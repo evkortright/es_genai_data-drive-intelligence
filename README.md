@@ -6,6 +6,7 @@
 - The virtual environment ragenv is used to capture all Python packages
 
 - pip libraries:
+ To use the Python client:
 ```
 pip install elasticsearch
 pip install python-dotenv
