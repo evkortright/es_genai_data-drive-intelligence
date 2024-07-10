@@ -22,3 +22,8 @@
    ```
    pip install streamlit
    ```
+
+   To develop the change-points advisor:
+   ```
+   pip install matplotlib
+   ```
