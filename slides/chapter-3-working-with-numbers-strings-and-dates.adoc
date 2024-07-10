@@ -1,0 +1,255 @@
+[.text-4xl]
+[.text-white]
+== 3 - Working with Numbers, Strings, and Dates
+image::blue-background.png[background, size=cover]
+
+[.text-3xl]
+== Numbers, Strings, and Dates
+image::white-background.png[background, size=cover]
+
+* In this lesson you will look more deeply at numeric and string data, plus you will learn to work with dates as used in Elasticsearch
+
+* We will explore
+
+** Integer vs. floating point numbers
+
+** `Strings` and their API
+
+** `ZonedDateTime` objects and their API
+
+** Other objects related to `ZonedDateTime`, such as `Duration`
+
+[.text-4xl]
+[.text-white]
+== Exposed Java APIs
+image::green-background.png[background, size=cover]
+
+[.text-3xl]
+== Java Classes and Operations Exposed
+image::white-background.png[background, size=cover]
+
+* Painless exposes many Java classes and operations through a whitelist intended to keep the cluster secure
+
+** More can be exposed by extending the whitelist — go https://discuss.elastic.co/t/how-do-you-use-the-examplewhitelistextension-in-terms-aggregations/120551[here]
+ for an example of how to do this
+
+* The https://www.elastic.co/guide/en/elasticsearch/painless/current/painless-api-reference.html[Painless API Reference] documents all of the Java APIs available to a script, including methods exposed directly from the _JRE_, from Elasticsearch, and from Painless itself
+
+** So, for example, to see which operations are available for `Strings`, we can go to https://www.elastic.co/guide/en/elasticsearch/painless/current/painless-api-reference-shared-java-lang.html#painless-api-reference-shared-String[this page] on the _Painless Shared API_
+
+[.text-4xl]
+[.text-white]
+== Numbers
+image::green-background.png[background, size=cover]
+
+[.text-3xl]
+== Working with Numbers in Painless
+image::white-background.png[background, size=cover]
+
+* Painless includes Java number types, including
+
+** Integer types: `byte` (8 bits), `short` (16 bits), `int` (32 bits), and `long` (64 bits)
+
+** Floating-point types: `float` (32 bits and 7 decimal digits) and `double` (64 bits and 16 decimal digits)
+
+** Many problems dealing with numbers can be solved simply by using the Java `Math` API — or related API’s such as `StrictMath` or `Random`
+
+** You should be aware of the issues of working with numbers on computers, including overflow and accuracy limitations — if you write advanced numeric algorithms in Painless, you will need to have a deeper understanding of these issues
+
+[.text-3xl]
+== Working with Numbers (continued)
+image::white-background.png[background, size=cover]
+
+* Let’s explore the Math API through examples
+
+** `Math.pow(2, 10)` returns `1024` or 
+
+** `Math.random()` returns a random number between `0.0` and `1.0`
+
+** `Math.sin(Math.toRadians(90))` returns `1.0`, the sine of 90 degrees (which need to be converted to radians before using `Math.sin`) — all trigonometric functions you can think of are available in `Math`
+
+** `Math.sqrt(2.0)` returns `1.4142135623730951`, an approximation to the square root of `2`
+
+** Many other functions are available in `Math` and related API’s such as `Random` and the numeric object types like `Number`, `Integer`, `Float`, `Double`, and others
+
+[.text-2xl]
+== Working with Numbers (continued)
+image::white-background.png[background, size=cover]
+
+[.text-left]
+* Let’s solve a fun numeric problem. The area of a regular polygon with `n` sides of length `s` can be found using the following formula
+
+stem:[(s^2n)/(4 tan(180/n))]
+
+[.text-left]
+* This script finds the area of any regular polygon — try it out!
+
+```
+include::../code/area_regular_polygon.painless[]
+```
+
+[.text-4xl]
+[.text-white]
+== Strings
+image::green-background.png[background, size=cover]
+
+[.text-2xl]
+== Working with Strings in Painless
+image::white-background.png[background, size=cover]
+
+* Working with character strings is an important part of scripting with Painless
+
+** Painless exposes many Java string operations and more can be exposed by whitelisting them — go https://discuss.elastic.co/t/how-do-you-use-the-examplewhitelistextension-in-terms-aggregations/120551[here] for an example
+
+* Let’s explore the strings API with some examples:
+
+** `String s ="Hello, World!"` defines a variable `s` of type `String` set to an initial value of `"Hello, World!"`
+
+** `s.length()` returns the number of characters in `s`, or `13` in the case of `"Hello World!"`
+
+** String concatenation can be done with the `+` operator, therefore `"Hello," + firstName +"" + lastName +"!”` produces the new string `"Hello, John Doe!"` if firstName is `"John"` and lastName is `"Doe"`
+
+[.text-2xl]
+== Working with Strings (continued)
+image::white-background.png[background, size=cover]
+
+* String API examples (continued)
+
+** `"Hello world!".compareToIgnoreCase("hello world!")` returns `0` indicating that the strings are equal (why?)
+
+** `"Hello world!".compareTo("hello world!")` returns a negative number indicating that `"Hello world!"` is lexicographically smaller than `"hello world!"`
+
+** `"Hello world!".toLowerCase()` returns `"hello world!"`
+
+** `"Hello world!".substring(3)` return `"lo world!"` — the substring starting with the character at position `3`
+
+** `"Hello world!".replace("world","universe")` returns `"Hello, universe!"`
+
+* Refer to the _Painless Shared API_ for (many) more string operations
+
+[.text-2xl]
+== Writing New String Functions
+image::white-background.png[background, size=cover]
+
+[.text-left]
+* When a string operation is not available (or is not suitable enough to solve your problem), you can write your own
+
+* For example, this function returns the reverse of an input string
+
+```
+include::../code/string_reverse.painless[]
+```
+
+[.text-4xl]
+[.text-white]
+== Dates
+image::green-background.png[background, size=cover]
+
+[.text-2xl]
+== Working with Dates in Painless
+image::white-background.png[background, size=cover]
+
+* In Painless, https://www.elastic.co/guide/en/elasticsearch/painless/current/painless-datetime.html[date-times, window="_blank"] are commonly represented as
+
+** A number of milliseconds since `1970-01-01 00:00:00 (UTC-0)`
+
+** A string in ISO 8601 format
+
+** A `ZonedDateTime` object
+
+* In combination with date parsers, formatters, and other utility functions, you can use Painless to
+
+** Convert numeric and string input to a date
+
+** Convert from one date representation to another
+
+** Format a date using standard or custom display format
+
+** Compare dates (equals, before, after)
+
+** Calculate the time between dates in years, months, etc.
+
+** Change the time-zone of a date — without changing the actual date
+
+[.text-2xl]
+== Working with Dates (continued)
+image::white-background.png[background, size=cover]
+
+* Let’s learn about ZonedDateTime by example
+
+** Consider the following date in a JSON document: `{"date":"2020-12-16T00:00+00:53:28[Europe/Berlin]"}`
+
+** `ZonedDateTime zdt = ZonedDateTime.parse(params.date)` converts the string into a `ZonedDateTime` object `zdt`
+
+** `zdt.getDayOfWeek()` returns the object `DayOfWeek.WEDNESDAY`
+
+** `zdt.withZoneSameInstant(ZoneId.of("America/Chicago"))` returns `"2020-12-15T17:06:32-06:00[America/Chicago]"` which has a `DayOfWeek.TUESDAY` — that is, we can change the time zone for any date, without altering the internal date `Instant`
+
+** We can `getHour()`, `getMinute()`, `getMonth()`, `getDayOfMonth()`, `getYear()`, `getDayOfYear()`, and so on
+
+** We can also `plusNanos()`, `minusNanos()`, `plusSeconds()`, `minusSeconds()`, and so on
+
+[.text-2xl]
+== Working with Dates (continued)
+image::white-background.png[background, size=cover]
+
+[.text-left]
+* In combination with other Java objects such as `Duration`, `Period`, `ChronoUnit`, and others, we can solve complex use cases involving dates
+
+* This script finds the number of years between the day this slide was written and Beethoven’s (probable) birthday
+
+```
+include::../code/years_between_dates.painless[]
+```
+
+[.text-left]
+* Yes! In 2020 we celebrated the 250th anniversary of Beethoven's  birthday! BTW, what day of the week was Beethoven’s birthday?
+
+[.text-4xl]
+[.text-white]
+== Summary: Working with Numbers, Strings, and Dates
+image::green-background.png[background, size=cover]
+
+[.text-3xl]
+== Summary
+image::white-background.png[background, size=cover]
+
+* Painless uses the same primitive types as Java, including integer types, floating-point number types, and booleans
+
+* Many common operations on numbers are provided by Java API’s such as `Math` and `StrictMath`
+
+* Java string operations are available including initialization, length, concatenation, and many others
+
+* Painless can handle dates represented in milliseconds, ISO 8601 formatted strings or `ZonedTimeDate` objects
+
+* Working with dates and times in a Painless script is easily done using Java API’s, including `ZonedDateTime`, `Duration`, `Period`, `ChronoUnit` and others
+
+[.text-3xl]
+== Quiz
+image::white-background.png[background, size=cover]
+
+. *True or False*: The Java `Math` API is not available to Painless scripts
+
+. List three operations on `String` available to Painless scripts
+
+. *True or False*: Strings containing dates in ISO 8601 format cannot be converted to `ZonedDateTime` objects in a script
+
+. List three object types, other than `ZonedDateTime` that can be used to work with dates and times in a script
+
+
+[.text-3xl]
+=== Quiz Answers
+image::white-background.png[background, size=cover]
+
+. *False*. Operations such as `Math.random()` or `Math.sin()` are readily available to Painless scripts, as well as many other Java API’s
+
+. `+` (or concat), `length`, `toLowerCase`, `substring`
+
+. *False*. ZonedDateTime.parse(s) will convert a string s containing a date into a ZonedDateTime object
+
+. `Duration`, `Period`, `ChronoUnit`
+
+[.text-4xl]
+[.text-white]
+== Lab 3: Working with Numbers, Strings, and Dates
+image::green-background.png[background, size=cover]

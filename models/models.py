@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-#from langchain.chat_models import AzureChatOpenAI
 from langchain_openai import AzureChatOpenAI
 
 def load_gpt3_5():

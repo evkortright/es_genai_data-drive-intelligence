@@ -11,3 +11,14 @@
    pip install elasticsearch
    pip install python-dotenv
    ```
+
+   To use ChatGPT with Azure:
+   ```
+   pip install langchain
+   pip install langchain_openai
+   ```
+
+   To use Streamlit:
+   ```
+   pip install streamlit
+   ```

@@ -1,0 +1,28 @@
+:source-highlighter: highlight.js
+:favicon: ../instructions/images/favicon.ico
+:icons: font
+:imagesdir: images/
+:customcss: release-4.1.css
+:customcss: my-css.css
+:revealjs_theme: white
+:revealjs_slideNumber: true
+:revealjs_background: white-background.png
+:stem:
+
+include::title-agenda-intro.adoc[]
+
+include::meetup.adoc[]
+
+// include::title-agenda-intro.adoc[]
+
+// include::chapter-0-the-case-for-painless.adoc[]
+
+// include::chapter-1-introduction-to-painless.adoc[]
+
+// include::chapter-2-scripting-on-index-data.adoc[]
+
+// include::chapter-3-working-with-numbers-strings-and-dates.adoc[]
+
+// include::chapter-4-problem-solving-with-painless.adoc[]
+
+// include::conclusions.adoc[]

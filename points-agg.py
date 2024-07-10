@@ -3,13 +3,12 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime
 import matplotlib.dates as mdates
-from sources.elasticsearch import load_elasticsearch, retrieve_from_elasticsearch
+from sources.elasticsearch import load_elasticsearch
 from models.models import load_gpt4, load_gpt3_5
-from langchain.memory import ConversationBufferMemory
-from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from langchain.chains import LLMChain
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
+import json
 
 st.set_page_config(layout="wide")
 
@@ -41,13 +40,13 @@ def load_data():
     }
     }
     )
-    #  buckets = res['aggregations']['histogram']['buckets']
-    # st.write(buckets)
-    #  df = pd.DataFrame(buckets)
+
     return res
 
 # Extract data from the JSON
 data = load_data()
+st.json(data.body)
+
 buckets = data['aggregations']['by_day']['buckets']
 dates = [bucket['key_as_string'] for bucket in buckets]
 averages = [bucket['avg_bytes']['value'] for bucket in buckets]
