@@ -1,4 +1,4 @@
-# points-agg.py
+# points-agg-search-template.py
 import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -43,7 +43,7 @@ def load_data():
 
 # Extract data from the JSON
 data = load_data()
-# st.json(data.body)
+st.json(data.body)
 
 buckets = data['aggregations']['by_day']['buckets']
 dates = [bucket['key_as_string'] for bucket in buckets]

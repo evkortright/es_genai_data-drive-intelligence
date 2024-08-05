@@ -1,4 +1,4 @@
-# points-agg.py
+# points-agg-1.py
 import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -14,43 +14,25 @@ es = load_elasticsearch()
 
 @st.cache_data
 def load_data():
-    res = es.search(index="kibana_sample_data_logs", body= {
-    "size": 0, 
-    "aggs": {
-        "by_day":{ 
-            "date_histogram": {
-                "field": "@timestamp",
-                "fixed_interval": "1d"
-            },
-            "aggs": {
-                "avg_bytes": { 
-                    "avg": {
-                        "field": "bytes"
-                    }
-                }
-            }
-        },
-        "change_points_avg": { 
-            "change_point": {
-                "buckets_path": "by_day>avg_bytes" 
-            }
-        }
-    }
-    }
-    )
-
+    res = es.search_template(index="kibana_sample_data_logs", id = "change-points-search")
     return res
 
 # Extract data from the JSON
 data = load_data()
-# st.json(data.body)
 
 buckets = data['aggregations']['by_day']['buckets']
-dates = [bucket['key_as_string'] for bucket in buckets]
-averages = [bucket['avg_bytes']['value'] for bucket in buckets]
+# st.write('buckets:')
+# st.json(buckets)
 
+dates = [bucket['key_as_string'] for bucket in buckets]
 # Convert dates to datetime objects
 dates = [datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ") for date in dates]
+# st.write('dates:')
+# st.json(dates)
+
+averages = [bucket['avg_bytes']['value'] for bucket in buckets]
+# st.write('averages:')
+# st.json(averages)
 
 # dark theme:
 plt.rcParams['figure.facecolor'] = 'black'
@@ -62,7 +44,6 @@ plt.rcParams['ytick.color']='white'
 # Create the line chart
 fig = plt.figure(figsize=(10, 7))
 plt.plot(dates, averages, marker='o', markersize = 4)
-
 
 # Extract the change point
 change_point_date = data['aggregations']['change_points_avg']['bucket']['key']
@@ -77,7 +58,6 @@ elif 'spike' in data['aggregations']['change_points_avg']['type']:
     plt.annotate('SPIKE', (mdates.date2num(change_point_date), change_point_avg), textcoords="offset points", xytext=(10,10), ha='center', color='green')
 
 plt.gcf().autofmt_xdate()
-# plt.show()
 
 st.header("ESRE Engineer Change-Points Advisor")
 
@@ -87,7 +67,7 @@ with col1:
     st.subheader("Change-Points Chart")
     st.pyplot(fig)
 
-with col2: 
+with col2:
     # llm = load_gpt4()
     llm = load_gpt3_5()
 
@@ -105,10 +85,9 @@ with col2:
     chain = prompt | llm | parser
 
     st.subheader("Analysis and Advice")
+
     st.chat_message("user").markdown(question)
     with st.spinner('Analyzing...'):
         answer = chain.invoke({"context": data, "question": question})
         st.balloons()
     st.chat_message("assistant").markdown(answer)
-
-st.chat_input()
